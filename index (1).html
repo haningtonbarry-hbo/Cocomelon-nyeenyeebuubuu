@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baby Rachel’s Nursery</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍼</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#bfe8ff; --sun:#ffe45e; --pink:#ff9ec4; --grass:#7edc8f; --ink:#3a2a6b; --white:#fffdf7; --red:#ff5b5b;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; font-family:"Baloo 2","Chalkboard SE","Comic Sans MS","Trebuchet MS",sans-serif;
+    color:var(--ink); background:var(--sky); font-size:1.15rem; line-height:1.4; overflow-x:hidden;
+    background-image:radial-gradient(circle at 20% 20%, #fff 0 6px, transparent 7px),
+                     radial-gradient(circle at 70% 60%, #fff 0 5px, transparent 6px);
+    background-size:90px 90px, 130px 130px;
+  }
+  h1,h2,h3{margin:0; line-height:1.05}
+  .wrap{max-width:900px; margin:0 auto; padding:0 16px}
+  .btn{
+    font:inherit; font-weight:800; font-size:1.1rem; color:var(--ink); background:var(--sun);
+    border:4px solid var(--ink); border-radius:999px; padding:10px 22px; cursor:pointer;
+    box-shadow:0 6px 0 var(--ink); transition:transform .1s, box-shadow .1s;
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn:active{transform:translateY(5px); box-shadow:0 1px 0 var(--ink)}
+  .btn:focus-visible, .balloon:focus-visible, .bottle:focus-visible{outline:4px dashed var(--red); outline-offset:4px}
+  .btn.pink{background:var(--pink)} .btn.green{background:var(--grass)}
+
+  /* floating background */
+  .floaters{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden}
+  .floaters span{position:absolute; bottom:-60px; font-size:2rem; opacity:.55; animation:rise linear infinite}
+  @keyframes rise{to{transform:translateY(-115vh) rotate(25deg)}}
+
+  header{position:relative; z-index:1; text-align:center; padding:28px 0 10px}
+  .banner{
+    display:inline-block; background:var(--red); color:#fff; border:4px solid var(--ink); border-radius:16px;
+    padding:4px 16px; font-weight:800; transform:rotate(-2deg); box-shadow:0 5px 0 var(--ink);
+  }
+  h1{font-size:clamp(2.4rem,9vw,4.6rem); font-weight:800; margin:16px 0 6px; text-shadow:4px 4px 0 var(--white)}
+  h1 .letter{display:inline-block; animation:bounce 1.4s ease-in-out infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  .sub{font-size:1.3rem; font-weight:700}
+  .baby{width:min(260px,60vw); margin:8px auto 0; display:block; animation:wobble 2.2s ease-in-out infinite; transform-origin:50% 90%}
+  @keyframes wobble{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+
+  section{position:relative; z-index:1; margin:28px 0}
+  .card{
+    background:var(--white); border:5px solid var(--ink); border-radius:34px; padding:22px 20px 26px;
+    box-shadow:0 8px 0 var(--ink); text-align:center;
+  }
+  .card h2{font-size:clamp(1.7rem,6vw,2.4rem); margin-bottom:10px}
+  .yellow{background:var(--sun)} .pinkbg{background:#ffd3e6} .greenbg{background:#c9f5d1}
+
+  /* certificate */
+  .cert{border:6px double var(--ink); border-radius:20px; padding:18px; background:#fff8dc}
+  .cert .big{font-size:2.2rem; font-weight:800}
+  .stamp{display:inline-block; margin-top:8px; border:4px solid var(--red); color:var(--red); font-weight:800;
+    padding:2px 14px; border-radius:12px; transform:rotate(-8deg); font-size:1.4rem}
+
+  /* meters */
+  .meter{height:38px; background:#fff; border:4px solid var(--ink); border-radius:999px; overflow:hidden; margin:14px auto; max-width:520px}
+  .meter > div{height:100%; width:0; background:linear-gradient(90deg,var(--grass),var(--sun),var(--red)); transition:width .4s}
+  .status{font-weight:800; font-size:1.3rem; min-height:2.2em}
+  .shake{animation:shake .25s linear infinite}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  /* bottle */
+  .bottle{
+    position:relative; width:110px; height:200px; margin:10px auto; background:none; border:none; cursor:pointer; padding:0; font:inherit;
+  }
+  .bottle .glass{position:absolute; left:10px; right:10px; top:44px; bottom:0; border:5px solid var(--ink); border-radius:24px; background:#fff; overflow:hidden}
+  .bottle .milk{position:absolute; left:0; right:0; bottom:0; height:0; background:#fff3e8; border-top:4px solid #ffd9b8; transition:height .25s}
+  .bottle .cap{position:absolute; left:28px; right:28px; top:0; height:50px; background:var(--pink); border:5px solid var(--ink); border-radius:24px 24px 6px 6px}
+  .bottle:active{transform:scale(.96)}
+
+  /* balloons */
+  .sky{position:relative; height:260px; border:5px solid var(--ink); border-radius:24px; background:linear-gradient(#e8f7ff,#bfe8ff); overflow:hidden; margin-top:10px}
+  .balloon{
+    position:absolute; bottom:-90px; width:62px; height:76px; border:4px solid var(--ink); border-radius:50% 50% 48% 48%;
+    cursor:pointer; padding:0; animation:float linear forwards;
+  }
+  .balloon::after{content:""; position:absolute; left:50%; top:100%; width:3px; height:40px; background:var(--ink); transform:translateX(-50%)}
+  @keyframes float{to{bottom:290px}}
+
+  .mood{font-size:3rem; margin:8px 0}
+  .out{font-size:1.5rem; font-weight:800; min-height:3.2em; display:flex; align-items:center; justify-content:center}
+
+  .signoff{font-weight:800; font-size:1.2rem}
+  footer{position:relative; z-index:1; text-align:center; padding:10px 16px 50px; font-weight:700}
+
+  /* sticky pop-up */
+  #toast{
+    position:fixed; left:50%; bottom:18px; transform:translate(-50%,140%); z-index:20; max-width:92vw;
+    background:var(--ink); color:#fff; border-radius:18px; padding:10px 18px; font-weight:800; transition:transform .35s;
+    text-align:center;
+  }
+  #toast.show{transform:translate(-50%,0)}
+
+  canvas#confetti{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:30}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important; transition:none !important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="floaters" id="floaters" aria-hidden="true"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<header class="wrap">
+  <div class="banner">🚼 OFFICIAL NURSERY · AGES 0–3 ONLY 🚼</div>
+  <h1 id="title" aria-label="Welcome to Baby Rachel’s Nursery"></h1>
+  <div class="sub">Please keep your rattle with you at all times! 🧸</div>
+
+  <!-- Original cartoon baby (inline SVG) -->
+  <svg class="baby" viewBox="0 0 260 280" role="img" aria-label="Cartoon baby with a pacifier">
+    <!-- body -->
+    <ellipse cx="130" cy="240" rx="78" ry="42" fill="#ffd3e6" stroke="#3a2a6b" stroke-width="6"/>
+    <rect x="100" y="205" width="60" height="38" rx="10" fill="#fff" stroke="#3a2a6b" stroke-width="5"/>
+    <text x="130" y="232" font-size="22" text-anchor="middle">🧷</text>
+    <!-- head -->
+    <circle cx="130" cy="112" r="88" fill="#ffe0c2" stroke="#3a2a6b" stroke-width="6"/>
+    <!-- hair curl -->
+    <path d="M130 26 C108 6 142 -4 150 14 C160 28 140 34 132 26" fill="none" stroke="#3a2a6b" stroke-width="6" stroke-linecap="round"/>
+    <!-- ears -->
+    <circle cx="42" cy="116" r="14" fill="#ffe0c2" stroke="#3a2a6b" stroke-width="5"/>
+    <circle cx="218" cy="116" r="14" fill="#ffe0c2" stroke="#3a2a6b" stroke-width="5"/>
+    <!-- eyes -->
+    <g id="eyes">
+      <ellipse cx="96" cy="100" rx="15" ry="20" fill="#fff" stroke="#3a2a6b" stroke-width="5"/>
+      <ellipse cx="164" cy="100" rx="15" ry="20" fill="#fff" stroke="#3a2a6b" stroke-width="5"/>
+      <circle cx="99" cy="104" r="8" fill="#3a2a6b"/>
+      <circle cx="161" cy="104" r="8" fill="#3a2a6b"/>
+      <circle cx="102" cy="100" r="3" fill="#fff"/>
+      <circle cx="164" cy="100" r="3" fill="#fff"/>
+    </g>
+    <!-- cheeks -->
+    <circle cx="68" cy="140" r="14" fill="#ff9ec4" opacity=".75"/>
+    <circle cx="192" cy="140" r="14" fill="#ff9ec4" opacity=".75"/>
+    <!-- pacifier -->
+    <circle cx="130" cy="150" r="17" fill="#ff5b5b" stroke="#3a2a6b" stroke-width="5"/>
+    <rect x="96" y="144" width="68" height="14" rx="7" fill="#ffe45e" stroke="#3a2a6b" stroke-width="5"/>
+    <circle cx="130" cy="188" r="12" fill="none" stroke="#3a2a6b" stroke-width="5"/>
+    <!-- bow -->
+    <path d="M150 22 L180 6 L180 40 Z M150 22 L120 6 L120 40 Z" fill="#ff9ec4" stroke="#3a2a6b" stroke-width="5" stroke-linejoin="round" transform="translate(30 8) scale(.8)"/>
+  </svg>
+  <p><button class="btn pink" id="lullabyBtn" type="button">🎵 Play lullaby</button></p>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <div class="card yellow">
+      <h2>🏅 Official Baby Certificate</h2>
+      <div class="cert">
+        <div>This certifies that</div>
+        <div class="big"><span class="nm">Rachel</span></div>
+        <div>is a fully qualified, 100% genuine BABY</div>
+        <div>Favorite snack: <b>mashed bananas 🍌</b></div>
+        <div>Bedtime: <b>6:30 PM sharp 🌙</b></div>
+        <div>Shoe size: <b>teeny tiny 👟</b></div>
+        <div class="stamp">DIAPER CERTIFIED</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card pinkbg" id="diaperCard">
+      <h2>🚨 Live Diaper Meter</h2>
+      <div class="status" id="diaperStatus">All clean! 😇</div>
+      <div class="meter" aria-hidden="true"><div id="diaperFill"></div></div>
+      <div class="mood" id="diaperMood">👶</div>
+      <button class="btn green" id="changeBtn" type="button">🧻 Change diaper</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
+      <h2>🍼 Feed the Baby</h2>
+      <p>Tap the bottle to fill it up. <span class="nm">Rachel</span> is getting cranky!</p>
+      <button class="bottle" id="bottle" type="button" aria-label="Fill the bottle with milk">
+        <span class="cap"></span>
+        <span class="glass"><span class="milk" id="milk"></span></span>
+      </button>
+      <div class="status" id="bottleStatus">Bottle is empty. Waaaah! 😭</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card greenbg">
+      <h2>🎈 Pop the Balloons</h2>
+      <p>Balloons popped: <b id="popCount">0</b> / 8</p>
+      <div class="sky" id="sky"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card yellow">
+      <h2>🧠 Mental Age Calculator</h2>
+      <div class="out" id="ageOut">Press the button to find out!</div>
+      <button class="btn pink" id="ageBtn" type="button">🔮 Calculate</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
+      <h2>📚 Baby Facts</h2>
+      <div class="out" id="factOut">Did you know? Babies are very cute.</div>
+      <button class="btn" id="factBtn" type="button">➡️ Next fact</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="card pinkbg">
+      <h2>⏰ Nap Time Countdown</h2>
+      <div class="status" id="napOut">Nap time in 10 seconds…</div>
+      <button class="btn green" id="napBtn" type="button">😴 Start nap timer</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p class="signoff">Built with love by Barry, the wise elder of this nursery 👴🍼</p>
+  <p>Grandpa-approved. Cane-tested. 🦯 Rachel, the crib is calling you.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- helpers ---------- */
+  var $ = function(id){ return document.getElementById(id); };
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Change the name with: yoursite.github.io/repo/?name=Rachel
+  var params = new URLSearchParams(window.location.search);
+  var friend = (params.get("name") || "Rachel").trim().slice(0, 20) || "Rachel";
+  var nameNodes = document.querySelectorAll(".nm");
+  for (var i = 0; i < nameNodes.length; i++) nameNodes[i].textContent = friend;
+  document.title = "Baby " + friend + "’s Nursery";
+
+  // Animated title
+  var titleText = "Welcome to Baby " + friend + "’s Nursery";
+  var titleEl = $("title");
+  titleEl.setAttribute("aria-label", titleText);
+  var colors = ["#ff5b5b","#ff9a1f","#e0b400","#27ae60","#2a8bd6","#8a4fd8","#e0489a"];
+  for (var c = 0; c < titleText.length; c++){
+    var ch = titleText.charAt(c);
+    if (ch === " "){ titleEl.appendChild(document.createTextNode(" ")); continue; }
+    var sp = document.createElement("span");
+    sp.className = "letter";
+    sp.setAttribute("aria-hidden", "true");
+    sp.style.color = colors[c % colors.length];
+    sp.style.animationDelay = (c * 0.07) + "s";
+    sp.textContent = ch;
+    titleEl.appendChild(sp);
+  }
+
+  // Toast
+  var toastEl = $("toast"), toastTimer = null;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+  }
+
+  // Floating emojis in the background
+  var fl = $("floaters");
+  var icons = ["🍼","🧸","⭐","🎈","🐥","🧷","🍌","🌈","🦆","🚼"];
+  if (!reduceMotion){
+    for (var f = 0; f < 14; f++){
+      var s = document.createElement("span");
+      s.textContent = icons[f % icons.length];
+      s.style.left = (Math.random() * 96) + "%";
+      s.style.animationDuration = (12 + Math.random() * 14) + "s";
+      s.style.animationDelay = (-Math.random() * 20) + "s";
+      s.style.fontSize = (1.4 + Math.random() * 1.8) + "rem";
+      fl.appendChild(s);
+    }
+  }
+
+  /* ---------- audio ---------- */
+  var actx = null;
+  function ctx(){
+    if (!actx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) actx = new AC();
+    }
+    if (actx && actx.state === "suspended") actx.resume();
+    return actx;
+  }
+  function beep(freq, dur, type, vol, when){
+    var a = ctx(); if (!a) return;
+    var t = a.currentTime + (when || 0);
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = type || "sine"; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  function popSound(){
+    var a = ctx(); if (!a) return;
+    var t = a.currentTime;
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = "square"; o.frequency.setValueAtTime(700, t);
+    o.frequency.exponentialRampToValueAtTime(90, t + 0.12);
+    g.gain.setValueAtTime(0.25, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+    o.connect(g); g.connect(a.destination);
+    o.start(t); o.stop(t + 0.16);
+  }
+  function cheer(){
+    [523, 659, 784, 1047].forEach(function(n, k){ beep(n, 0.2, "triangle", 0.2, k * 0.1); });
+  }
+  function wail(){
+    var a = ctx(); if (!a) return;
+    var t = a.currentTime;
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = "sawtooth";
+    o.frequency.setValueAtTime(420, t);
+    o.frequency.linearRampToValueAtTime(620, t + 0.25);
+    o.frequency.linearRampToValueAtTime(380, t + 0.6);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.12, t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.65);
+    o.connect(g); g.connect(a.destination);
+    o.start(t); o.stop(t + 0.7);
+  }
+
+  /* ---------- confetti ---------- */
+  var cv = $("confetti"), cx = cv.getContext("2d"), bits = [], running = false;
+  function sizeCanvas(){ cv.width = window.innerWidth; cv.height = window.innerHeight; }
+  sizeCanvas(); window.addEventListener("resize", sizeCanvas);
+  function confetti(n){
+    if (reduceMotion) return;
+    n = n || 120;
+    var pal = ["#ff5b5b","#ffe45e","#7edc8f","#ff9ec4","#5ab8ff","#b08cff"];
+    for (var k = 0; k < n; k++){
+      bits.push({
+        x: Math.random() * cv.width, y: -20 - Math.random() * 120,
+        vx: (Math.random() - 0.5) * 4, vy: 2 + Math.random() * 5,
+        w: 6 + Math.random() * 8, h: 8 + Math.random() * 10,
+        r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4,
+        c: pal[Math.floor(Math.random() * pal.length)]
+      });
+    }
+    if (!running){ running = true; requestAnimationFrame(tick); }
+  }
+  function tick(){
+    cx.clearRect(0, 0, cv.width, cv.height);
+    for (var k = bits.length - 1; k >= 0; k--){
+      var b = bits[k];
+      b.x += b.vx; b.y += b.vy; b.r += b.vr; b.vy += 0.03;
+      cx.save(); cx.translate(b.x, b.y); cx.rotate(b.r);
+      cx.fillStyle = b.c; cx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+      cx.restore();
+      if (b.y > cv.height + 30) bits.splice(k, 1);
+    }
+    if (bits.length){ requestAnimationFrame(tick); }
+    else { running = false; cx.clearRect(0, 0, cv.width, cv.height); }
+  }
+
+  /* ---------- lullaby (Twinkle Twinkle, public domain) ---------- */
+  var NOTE = {C:261.63, D:293.66, E:329.63, F:349.23, G:392.0, A:440.0};
+  var tune = "CCGGAAG FFEEDDC GGFFEED GGFFEED CCGGAAG FFEEDDC".replace(/ /g, "").split("");
+  var lullabyBtn = $("lullabyBtn"), lullabyOn = false, lullabyTimer = null, noteIdx = 0;
+  function nextNote(){
+    if (!lullabyOn) return;
+    var n = tune[noteIdx % tune.length];
+    beep(NOTE[n], 0.45, "sine", 0.22);
+    noteIdx++;
+    lullabyTimer = setTimeout(nextNote, 480);
+  }
+  lullabyBtn.addEventListener("click", function(){
+    lullabyOn = !lullabyOn;
+    if (lullabyOn){
+      ctx(); noteIdx = 0;
+      lullabyBtn.textContent = "⏹️ Stop lullaby";
+      toast("🎵 Twinkle twinkle, little " + friend + "…");
+      nextNote();
+    } else {
+      clearTimeout(lullabyTimer);
+      lullabyBtn.textContent = "🎵 Play lullaby";
+    }
+  });
+
+  /* ---------- diaper meter ---------- */
+  var dLevel = 0, dFill = $("diaperFill"), dStatus = $("diaperStatus"), dMood = $("diaperMood"), dCard = $("diaperCard");
+  var dStates = [
+    [0,  "All clean! 😇", "👶"],
+    [25, "Starting to feel funny… 🤔", "😐"],
+    [50, "Getting suspicious 🧐", "😬"],
+    [75, "Code YELLOW. Check the diaper! 😰", "😨"],
+    [100,"CODE BROWN! DIAPER EMERGENCY! 💩🚨", "😭"]
+  ];
+  function renderDiaper(){
+    dFill.style.width = dLevel + "%";
+    var st = dStates[0];
+    for (var k = 0; k < dStates.length; k++){ if (dLevel >= dStates[k][0]) st = dStates[k]; }
+    dStatus.textContent = st[1].replace("Rachel", friend);
+    dMood.textContent = st[2];
+    if (dLevel >= 100) dCard.classList.add("shake"); else dCard.classList.remove("shake");
+  }
+  var diaperTimer = setInterval(function(){
+    if (dLevel < 100){
+      dLevel = Math.min(100, dLevel + 5);
+      renderDiaper();
+      if (dLevel === 100){ wail(); toast("🚨 " + friend + " needs a diaper change NOW!"); }
+    }
+  }, 1500);
+  $("changeBtn").addEventListener("click", function(){
+    var wasFull = dLevel >= 100;
+    dLevel = 0; renderDiaper();
+    cheer(); confetti(80);
+    toast(wasFull ? "Phew! Fresh diaper, happy baby! 🧼" : "Changed early. Good caregiver! ⭐");
+  });
+  renderDiaper();
+
+  /* ---------- bottle ---------- */
+  var milk = $("milk"), bStatus = $("bottleStatus"), bLevel = 0;
+  $("bottle").addEventListener("click", function(){
+    ctx();
+    bLevel += 10;
+    if (bLevel > 100) bLevel = 100;
+    milk.style.height = bLevel + "%";
+    beep(300 + bLevel * 4, 0.12, "triangle", 0.15);
+    if (bLevel < 40) bStatus.textContent = "Glug glug… 🍼";
+    else if (bLevel < 100) bStatus.textContent = "Almost full! Keep going! 🥛";
+    else {
+      bStatus.textContent = friend + " drank it all! Time to burp 🤭";
+      cheer(); confetti(100);
+      setTimeout(function(){ bLevel = 0; milk.style.height = "0%"; bStatus.textContent = "Bottle is empty. Waaaah! 😭"; }, 2200);
+    }
+  });
+
+  /* ---------- balloons ---------- */
+  var sky = $("sky"), popped = 0, TOTAL = 8;
+  var bCols = ["#ff5b5b","#ffe45e","#7edc8f","#ff9ec4","#5ab8ff","#b08cff","#ffa94d","#4dd9c0"];
+  var popCount = $("popCount");
+  function spawnBalloon(idx){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "balloon";
+    b.setAttribute("aria-label", "Pop balloon");
+    b.style.background = bCols[idx % bCols.length];
+    b.style.left = (4 + (idx * 11.5) % 82) + "%";
+    var dur = 7 + Math.random() * 6;
+    b.style.animationDuration = dur + "s";
+    b.style.animationDelay = (-Math.random() * 3) + "s";
+    b.addEventListener("click", function(){
+      popSound();
+      if (b.parentNode) b.parentNode.removeChild(b);
+      popped++; popCount.textContent = popped;
+      if (popped === TOTAL){
+        cheer(); confetti(160);
+        toast("🎉 All balloons popped! " + friend + " is a champion baby!");
+        setTimeout(resetBalloons, 2500);
+      }
+    });
+    // when it floats away, respawn it so the game never runs dry
+    b.addEventListener("animationend", function(){
+      if (b.parentNode){
+        b.parentNode.removeChild(b);
+        spawnBalloon(idx);
+      }
+    });
+    sky.appendChild(b);
+  }
+  function resetBalloons(){
+    popped = 0; popCount.textContent = "0";
+    sky.innerHTML = "";
+    for (var k = 0; k < TOTAL; k++) spawnBalloon(k);
+  }
+  resetBalloons();
+
+  /* ---------- mental age ---------- */
+  var ages = [
+    "1 year, 2 months 🍼", "9 months and crawling 🐛", "2 years, 1 month 🧸",
+    "Newborn (still needs a nap) 😴", "18 months, loves bubbles 🫧",
+    "3 years (potty training: in progress) 🚽", "6 months, only drinks milk 🥛",
+    "Toddler with a very tiny backpack 🎒"
+  ];
+  var ageOut = $("ageOut");
+  $("ageBtn").addEventListener("click", function(){
+    ageOut.textContent = friend + "’s mental age: " + ages[Math.floor(Math.random() * ages.length)];
+    beep(660, 0.15, "triangle", 0.18); beep(880, 0.2, "triangle", 0.18, 0.12);
+    confetti(60);
+  });
+
+  /* ---------- facts ---------- */
+  var facts = [
+    "Babies take naps. " + friend + " has a nap schedule too. 😴",
+    "Fun fact: crayons taste like nothing, but " + friend + " tried one anyway. 🖍️",
+    "The word “goo-goo” is 100% " + friend + "’s native language. 🗣️",
+    "Rubber duckies are " + friend + "’s favorite bath buddies. 🦆",
+    "Sippy cups are the finest drinkware ever invented. " + friend + " agrees. 🥤",
+    "Official nursery rule: no staying up past bedtime. 🌙",
+    "Grandpas have wisdom. Babies have snacks. Choose wisely. 🍪",
+    "Peekaboo remains the funniest joke on Earth. 🙈"
+  ];
+  var factIdx = 0, factOut = $("factOut");
+  $("factBtn").addEventListener("click", function(){
+    factIdx = (factIdx + 1) % facts.length;
+    factOut.textContent = facts[factIdx];
+    beep(520, 0.12, "triangle", 0.15);
+  });
+
+  /* ---------- nap timer ---------- */
+  var napOut = $("napOut"), napBtn = $("napBtn"), napTimer = null;
+  napBtn.addEventListener("click", function(){
+    if (napTimer) return;
+    var left = 10;
+    napBtn.disabled = true;
+    napOut.textContent = "Nap time in " + left + " seconds…";
+    napTimer = setInterval(function(){
+      left--;
+      if (left > 0){
+        napOut.textContent = "Nap time in " + left + " second" + (left === 1 ? "" : "s") + "…";
+      } else {
+        clearInterval(napTimer); napTimer = null;
+        napBtn.disabled = false;
+        napOut.textContent = "💤 Shhh… " + friend + " is asleep. Zzz…";
+        toast("🌙 Goodnight, " + friend + "!");
+        beep(392, 0.5, "sine", 0.2); beep(329, 0.5, "sine", 0.2, 0.4); beep(261, 0.8, "sine", 0.2, 0.8);
+      }
+    }, 1000);
+  });
+
+  // Welcome pop-up after a moment
+  setTimeout(function(){ toast("👶 Welcome back, " + friend + "! Your crib is ready."); }, 1200);
+})();
+</script>
+</body>
+</html>
